@@ -6,6 +6,7 @@ import { exerciseOptions, fetchData } from '../utils/fetchData';
 import HorizontalScrollbar from './HorizontalScrollbar';
 
 const SearchExercise = ({ setExercises, bodyPart, setBodyPart}) => {
+  
   const [search,setSearch] = useState('');
  
   const [bodyParts, setBodyParts] = useState([]);
@@ -17,23 +18,34 @@ const SearchExercise = ({ setExercises, bodyPart, setBodyPart}) => {
       setBodyParts(['all',...bodyPartData])
     }
     fetchExercisesData();
+    
   },[])
 
-  const handleSearch = async() => {
-    if(search){
-      const exerciseData = await fetchData('https://exercisedb.p.rapidapi.com/exercises', exerciseOptions);
-      const SearchExercise = exerciseData.filter(
-        (exercise) => exercise.name.toLowerCase().includes(search) 
-        || exercise.target.toLowerCase().includes(search) 
-        || exercise.equipment.toLowerCase().includes(search) 
-        || exercise.bodyPart.toLowerCase().includes(search) 
+  const handleSearch = async () => {
+  if (search) {
+    const exerciseData = await fetchData(
+      'https://exercisedb.p.rapidapi.com/exercises',
+      exerciseOptions
+    );
+
+    const filteredExercises = exerciseData.filter((exercise) => {
+      const searchValue = search.toLowerCase();
+      return (
+        (exercise.name || '').toLowerCase().includes(searchValue) ||
+        (exercise.target || '').toLowerCase().includes(searchValue) ||
+        (exercise.equipment || '').toLowerCase().includes(searchValue) ||
+        (exercise.bodyPart || '').toLowerCase().includes(searchValue)
       );
+    });
 
-      setSearch('');
-      setExercises(SearchExercise);
-    }
-  };
+    console.log("Filtered results:", filteredExercises); // ← Check this
 
+    setSearch('');
+    setExercises(filteredExercises);
+  }
+};
+
+  
   return (
     <Stack
       alignItems="center"
@@ -65,7 +77,7 @@ const SearchExercise = ({ setExercises, bodyPart, setBodyPart}) => {
           variant="outlined"
           placeholder="Search Exercises"
           value={search}
-          onChange={(e) => setSearch(e.target.value.toLowerCase)}
+          onChange={(e) => setSearch(e.target.value.toLowerCase().trim())}
           fullWidth
           sx={{ pr: '120px' }}            // <-- add padding right to avoid overlap
           InputProps={{
