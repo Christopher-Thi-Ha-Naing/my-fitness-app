@@ -1,0 +1,8 @@
+.icon-wrapper {
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+}
+
+.icon-wrapper:hover {
+  background-color: #1565C0; 
+} 
