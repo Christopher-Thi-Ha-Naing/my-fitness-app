@@ -1,17 +1,18 @@
 import React, { useEffect , useRef, useContext } from 'react';
 import { Box, Typography } from '@mui/material';
 import BodyPart from './BodyPart';
-import RightArrowIcon from '../assets/icons/right-arrow.png';
-import LeftArrowIcon from '../assets/icons/left-arrow.png';
+import RightArrowIcon from '../assets/icons/right_arrow.png';
+import LeftArrowIcon from '../assets/icons/left_arrow.png';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import 'react-horizontal-scrolling-menu/dist/styles.css';
+import ExerciseCard from './ExerciseCard';
 
 const LeftArrow = () => {
   const { scrollPrev } = useContext(VisibilityContext);
 
   return (
     <Typography onClick={() => scrollPrev()} className="right-arrow">
-      <img src={LeftArrowIcon} alt="right-arrow" />
+      <img src={LeftArrowIcon} alt="right-arrow" style={{ width: '30px', height: '30px' }} />
     </Typography>
   );
 };
@@ -21,13 +22,13 @@ const RightArrow = () => {
 
   return (
     <Typography onClick={() => scrollNext()} className="left-arrow">
-      <img src={RightArrowIcon} alt="right-arrow" />
+      <img src={RightArrowIcon} alt="right-arrow" style={{ width: '30px', height: '30px' }} />
     </Typography>
   );
 };
 
 
-const HorizontalScrollbar = ({ data, bodyPart, setBodyPart }) => {
+const HorizontalScrollbar = ({ data, bodyPart, setBodyPart, isBodyPart }) => {
   const scrollRef = useRef(null);
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -35,7 +36,10 @@ const HorizontalScrollbar = ({ data, bodyPart, setBodyPart }) => {
     const onWheel = (e) => {
       if (scrollContainer) {
         e.preventDefault();
-        scrollContainer.scrollLeft += e.deltaY * 4.5; 
+        scrollContainer.scrollBy({
+      left: e.deltaY * 4.5,
+      behavior: 'smooth'
+    });
       }
     };
 
@@ -71,7 +75,9 @@ const HorizontalScrollbar = ({ data, bodyPart, setBodyPart }) => {
             title={item.id || item}
             m="0 30px"
         >
-            <BodyPart item={item} bodyPart={bodyPart} setBodyPart={setBodyPart}/>
+          {isBodyPart ? 
+            <BodyPart item={item} bodyPart={bodyPart} setBodyPart={setBodyPart}/> :
+            <ExerciseCard exercise={item} />}
         </Box>
     ))}
     </ScrollMenu>
